@@ -2,11 +2,11 @@
 
 Review preview. The production regmedia.ca domain remains on its existing site.
 
-An authored design and media studio journey: an original interactive WebGL metallic signal field, original RegMedia animated-mark video, reversible desktop horizontal work chapter, swipeable mobile project rail, project dialogs, portfolio archive, interactive process timeline, manually controlled testimonials, and a scroll-scrubbable signal lab.
+An authored design and media studio journey: an original interactive WebGL metallic signal field, original RegMedia animated-mark video, user-owned cinematic shoreline footage, reversible desktop horizontal work chapter, swipeable mobile project rail, project dialogs, portfolio archive, interactive process timeline, manually controlled testimonials, and a scroll-scrubbable signal lab.
 
 ## Run
 
-Serve `public/` with a static HTTP server. No frontend dependencies or build output generation required. `npm run build` verifies essential assets.
+Run `npm run build` to copy the source and media into `public/`, then serve `public/` with a static HTTP server. There are no frontend dependencies.
 
 Cloudflare Worker name: `regmedia-preview`; asset directory: `public`; deploy command: `npx wrangler deploy`.
 
