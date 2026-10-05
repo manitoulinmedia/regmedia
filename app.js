@@ -12,7 +12,10 @@ const videoIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!
 let maxTravel=0;
 function measure(){maxTravel=Math.max(0,track.scrollWidth-innerWidth);onScroll();}
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
-function seek(p){const duration=scrub.duration;if(!Number.isFinite(duration))return;const t=clamp(p)*(duration-.05);if(Math.abs(scrub.currentTime-t)>.06&&!scrub.seeking)scrub.currentTime=t;$('#signal-time').textContent='FRAME '+String(Math.round(p*78)).padStart(3,'0');slider.value=String(Math.round(p*100));}
+let pendingScrubTime=0;
+function flushSeek(){if(Number.isFinite(scrub.duration)&&!scrub.seeking&&Math.abs(scrub.currentTime-pendingScrubTime)>.025)scrub.currentTime=pendingScrubTime;}
+function seek(p){const duration=scrub.duration;if(!Number.isFinite(duration))return;pendingScrubTime=clamp(p)*(duration-.05);flushSeek();$('#signal-time').textContent='FRAME '+String(Math.round(p*78)).padStart(3,'0');slider.value=String(Math.round(p*100));}
+scrub.addEventListener('seeked',flushSeek);
 let scrubLoaded=false;const scrubIO=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)&&!scrubLoaded){scrubLoaded=true;scrub.preload='auto';scrub.load();}},{rootMargin:'400px'});scrubIO.observe(lab);
 function onScroll(){if(scrolling)return;scrolling=true;requestAnimationFrame(()=>{scrolling=false;const y=scrollY;const film=$('#film');if(film&&!mobile.matches&&!reduced.matches){const r=film.getBoundingClientRect();film.style.setProperty('--film-progress',clamp(-r.top/(film.offsetHeight-innerHeight)));}header.classList.toggle('scrolled',y>50);const total=document.documentElement.scrollHeight-innerHeight;$('.progress').style.width=(total?y/total*100:0)+'%';if(!mobile.matches&&!reduced.matches){const r=work.getBoundingClientRect();workP=clamp(-r.top/(work.offsetHeight-innerHeight));track.style.transform=`translate3d(${-maxTravel*workP}px,0,0)`;const idx=Math.min(4,Math.round(workP*4));setCounter(idx);}if(!mobile.matches&&!paused&&Date.now()>scrubOverrideUntil){const r=lab.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)seek(clamp(-r.top/(lab.offsetHeight-innerHeight)));}});}
 function setCounter(i){$('#work-counter').textContent=String(i+1).padStart(2,'0')+' / 05';$('.work-line span').style.transform=`translateX(${i*100}%)`;$('#work-prev').disabled=i===0;$('#work-next').disabled=i===4;}
